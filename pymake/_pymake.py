@@ -16,6 +16,7 @@ __all__ = ['PymakeTypeError', 'PymakeKeyError',
 RE_MAKE_CMD = re.compile(r'^\t(@\+?)(make)?')
 RE_MACRO_DEF = re.compile(r"^(\S+)\s*\:?\=\s*(.*?)$")
 RE_MACRO = re.compile(r"\$\(\s*\S+\s*\)")
+RE_COMMENT = re.compile("#.*$")
 
 
 class PymakeTypeError(TypeError):
@@ -43,6 +44,9 @@ def parse_makefile_aliases(filepath):
         ini_lines = (RE_MAKE_CMD.sub('\t', i) for i in ini_lines.split('\n'))
     # fake section to resemble valid *.ini
     ini_lines = ['[root]'] + list(ini_lines)
+    # replace comments with dummy contents so as to remove all reserved exprs
+    ini_lines = [RE_COMMENT.sub("# removed comment", line)
+                 for line in ini_lines]
 
     # Substitute macros
     macros = dict(found for l in ini_lines

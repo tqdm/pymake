@@ -16,7 +16,7 @@ circle:
 	circle
 
 empty:
-	# head
+	# head $(ignored_expansion)
 
 one:
 	@make two
